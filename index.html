@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ฟอร์มบันทึกข้อมูลนักเรียน</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Sarabun', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen flex items-center justify-center p-4">
+
+    <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-2xl">
+        <h2 class="text-2xl font-bold text-center text-slate-800 mb-6 border-b pb-4">ระบบบันทึกข้อมูลนักเรียน</h2>
+        
+        <form id="studentForm" class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">คำนำหน้าชื่อ</label>
+                    <select name="prefix" required class="w-full border rounded-lg p-2.5 bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none">
+                        <option value="">เลือก...</option>
+                        <option value="เด็กชาย">เด็กชาย</option>
+                        <option value="เด็กหญิง">เด็กหญิง</option>
+                        <option value="นาย">นาย</option>
+                        <option value="นางสาว">นางสาว</option>
+                    </select>
+                </div>
+                <div class="md:col-span-1.5">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">ชื่อ</label>
+                    <input type="text" name="firstName" required class="w-full border rounded-lg p-2.5 bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div class="md:col-span-1.5">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">นามสกุล</label>
+                    <input type="text" name="lastName" required class="w-full border rounded-lg p-2.5 bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">ชั้นมัธยมศึกษาปีที่</label>
+                    <select name="grade" required class="w-full border rounded-lg p-2.5 bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none">
+                        <option value="">เลือก...</option>
+                        <option value="1">ม.1</option>
+                        <option value="2">ม.2</option>
+                        <option value="3">ม.3</option>
+                        <option value="4">ม.4</option>
+                        <option value="5">ม.5</option>
+                        <option value="6">ม.6</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">ห้อง</label>
+                    <input type="number" name="room" min="1" required class="w-full border rounded-lg p-2.5 bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">เลขที่</label>
+                    <input type="number" name="no" min="1" required class="w-full border rounded-lg p-2.5 bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">เลขประจำตัว (5 หลัก)</label>
+                    <input type="text" name="studentId" pattern="\d{5}" minlength="5" maxlength="5" required placeholder="xxxxx" class="w-full border rounded-lg p-2.5 bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">น้ำหนัก (ก.ก.)</label>
+                    <input type="number" name="weight" step="0.1" required class="w-full border rounded-lg p-2.5 bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">ส่วนสูง (ซ.ม.)</label>
+                    <input type="number" name="height" step="0.1" required class="w-full border rounded-lg p-2.5 bg-gray-50 focus:ring-2 focus:ring-blue-500 outline-none">
+                </div>
+            </div>
+
+            <div class="pt-4">
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium p-3 rounded-lg transition duration-200 shadow-md">
+                    บันทึกข้อมูล
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // กำหนด URL ของ Google Apps Script ที่ได้รับมา
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwcSftT2ivnAh9llfZpj1Jk2fnaJGxyErxWDhpXVKG29zFTDzfqVf8lsxa9sP6WAPEv/exec";
+
+        document.getElementById('studentForm').addEventListener('submit', function(e) {
+            e.preventDefault(); // ป้องกันการรีเฟรชหน้าจอตอนกดส่งฟอร์ม
+
+            // แสดง SweetAlert2 แจ้งสถานะกำลังบันทึกข้อมูล (Loading)
+            Swal.fire({
+                title: 'กำลังบันทึกข้อมูล...',
+                text: 'โปรดรอสักครู่ ระบบกำลังนำข้อมูลลงฐานข้อมูล',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            // ดึงข้อมูลจากฟอร์มมาแปลงให้อยู่ในรูป Query String
+            const formData = new FormData(this);
+            const params = new URLSearchParams();
+            formData.forEach((value, key) => {
+                params.append(key, value);
+            });
+
+            // สร้างชื่อฟังก์ชัน callback แบบสุ่มเพื่อส่งไปกับ JSONP
+            const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+            params.append('callback', callbackName);
+
+            // สร้างแท็ก <script> เพื่อส่งข้อมูลแบบ JSONP (หลีกเลี่ยงปัญหา Cross-Origin)
+            const script = document.createElement('script');
+            script.src = `${WEB_APP_URL}?${params.toString()}`;
+
+            // สร้างฟังก์ชัน Global รอรับผลลัพธ์ที่ตอบกลับมาจาก Apps Script
+            window[callbackName] = function(response) {
+                // ลบแท็ก script ทิ้งหลังจากใช้งานเสร็จเพื่อเคลียร์หน่วยความจำ
+                document.body.removeChild(script);
+                delete window[callbackName];
+
+                // ตรวจสอบสถานะการบันทึกข้อมูล
+                if (response.result === 'success') {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'บันทึกสำเร็จ!',
+                        text: 'ข้อมูลนักเรียนได้ถูกบันทึกลงในระบบเรียบร้อยแล้ว',
+                        confirmButtonColor: '#2563eb'
+                    });
+                    document.getElementById('studentForm').reset(); // เคลียร์ค่าในฟอร์มเมื่อสำเร็จ
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'เกิดข้อผิดพลาด',
+                        text: 'ไม่สามารถบันทึกข้อมูลได้: ' + response.message,
+                        confirmButtonColor: '#ef4444'
+                    });
+                }
+            };
+
+            // หากเกิดข้อผิดพลาดในการโหลดสคริปต์ (เช่น URL ผิด หรือเซิร์ฟเวอร์ล่ม)
+            script.onerror = function() {
+                document.body.removeChild(script);
+                delete window[callbackName];
+                Swal.fire({
+                    icon: 'error',
+                    title: 'เชื่อมต่อล้มเหลว',
+                    text: 'ไม่สามารถติดต่อกับเซิร์ฟเวอร์ได้ กรุณาลองใหม่อีกครั้ง',
+                    confirmButtonColor: '#ef4444'
+                });
+            };
+
+            // แทรกแท็กสคริปต์เข้าไปในหน้าเว็บเพื่อสั่งให้โค้ดทำงาน (เริ่มส่งข้อมูล)
+            document.body.appendChild(script);
+        });
+    </script>
+</body>
+</html>
